@@ -1,6 +1,6 @@
 # Introduction to FluentValidation
 
-Source code used in the article [Validating requests with FluentValidation](https://www.blouppy.com/blog/2022-06-03-validating-requests-with-fluentvalidation/) on the [Blouppy](https://www.blouppy.com) website.
+Source code used in the article [Validating requests with FluentValidation](https://www.blouppy.com/blog/2023-06-03-validating-requests-with-fluentvalidation/) on the [Blouppy](https://www.blouppy.com) website.
 
 ## Project type
 - ASP.NET Core Web API
