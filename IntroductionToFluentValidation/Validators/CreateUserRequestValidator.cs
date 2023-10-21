@@ -1,6 +1,8 @@
 using FluentValidation;
 using IntroductionToFluentValidation.Requests;
 
+namespace IntroductionToFluentValidation.Validators;
+
 public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {
     public CreateUserRequestValidator()
