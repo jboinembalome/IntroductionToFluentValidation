@@ -6,37 +6,26 @@ namespace IntroductionToFluentValidation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(IValidator<CreateUserRequest> validator) : ControllerBase
 {
-    private readonly IValidator<CreateUserRequest> _validator;
-    
-    public UsersController(IValidator<CreateUserRequest> validator)
-    {
-        _validator = validator;
-    }
-
     [HttpPost]
-    public async Task<IActionResult> CreateUser(CreateUserRequest request)
+    public async Task<IActionResult> CreateUser(CreateUserRequest request, CancellationToken cancellationToken)
     {
         // Validate the request using the injected validator asynchronously
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         // Check if validation fails
         if (!validationResult.IsValid)
         {
-            // Optional: Improve error response by formatting validation errors 
-            // into a standardized format using the ValidationProblemDetails object
-            var errors = validationResult.Errors
-                .GroupBy(v => v.PropertyName, v => v.ErrorMessage)
-                .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
-
-            var details = new ValidationProblemDetails(errors)
+            // Copy the errors into the ModelState, so that ValidationProblem() formats them
+            // the same way as ASP.NET Core's own validation errors (type, title, status, traceId)
+            foreach (var error in validationResult.Errors)
             {
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
-            };
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
 
-            // Return a 400 Bad Request response with the validation errors
-            return BadRequest(new BadRequestObjectResult(details));
+            // Return a 400 Bad Request response with a ValidationProblemDetails body
+            return ValidationProblem(ModelState);
         }
 
         // Process the valid request...
