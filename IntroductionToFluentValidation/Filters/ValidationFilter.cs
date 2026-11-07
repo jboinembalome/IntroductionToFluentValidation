@@ -10,13 +10,13 @@ public sealed class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilt
         var request = context.Arguments.OfType<T>().FirstOrDefault();
         if (request is null)
         {
-            return Results.BadRequest();
+            return TypedResults.BadRequest();
         }
 
         var validationResult = await validator.ValidateAsync(request, context.HttpContext.RequestAborted);
         if (!validationResult.IsValid)
         {
-            return Results.ValidationProblem(validationResult.ToDictionary());
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
         return await next(context);
