@@ -10,9 +10,10 @@ public static class UserEndpoints
         app.MapPost("/api/minimal/users", (CreateUserRequest request) =>
             {
                 // Process the valid request...
-                return Results.Ok();
+                return TypedResults.Ok();
             })
-            .AddEndpointFilter<ValidationFilter<CreateUserRequest>>();
+            .AddEndpointFilter<ValidationFilter<CreateUserRequest>>()
+            .ProducesValidationProblem();
 
         return app;
     }
